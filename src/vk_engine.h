@@ -5,8 +5,24 @@
 
 #include <vk_types.h>
 
+struct FrameData {
+	VkCommandPool _commandPool;
+	VkCommandBuffer _mainCommandBuffer;
+	VkSemaphore _swapchainSemaphore, _renderSemaphore;
+	VkFence _renderFence;
+};
+
+constexpr unsigned int FRAME_OVERLAP = 2;
+
 class VulkanEngine {
 public:
+	FrameData _frames[FRAME_OVERLAP];
+
+	//getter used so we can reterive the currently inactive buffer
+	//while other is used by gpu
+	FrameData& get_current_frame() { return _frames[_frameNumber % FRAME_OVERLAP]; };
+	VkQueue _graphicsQueue;
+	uint32_t _graphicsQueueFamily;
 
 	bool _isInitialized{ false };
 	int _frameNumber {0};
